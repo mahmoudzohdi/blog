@@ -27,7 +27,7 @@ Today `blog.zohdi.me` is a Hashnode blog with no posts. The only published artic
 
 ## 1. Architecture and hosting
 
-- **Astro 6**, static output, MDX integration, Shiki at build (talks' "blueprint" theme), no UI framework.
+- **Astro 7** (7.4.x; Node 24), static output, MDX integration, Shiki at build (talks' "blueprint" theme), no UI framework. Astro 7's default Markdown processor (Sätteri) runs no remark plugins, so reading time is computed from `entry.body`.
 - **Fonts self-hosted** via `@fontsource` (Alexandria, IBM Plex Sans, IBM Plex Mono): no third-party requests.
 - **Cloudflare Worker `blog`**, static assets only (`wrangler.jsonc` → `assets.directory: ./dist`), custom domain `blog.zohdi.me`, `workers_dev: false`, `preview_urls: false`. Same pattern as talks. No adapter.
 - **Deploy:** Cloudflare Workers Builds (Git integration) on push to `main`. The Worker name in the dashboard must equal `name` in `wrangler.jsonc`.
@@ -44,7 +44,7 @@ description: ≤160 chars, used in lists, meta and OG
 pubDate: 2026-11-20
 updatedDate: 2026-12-02      # optional
 tags: [architecture, javascript]
-id: zohdi-hero               # permanent; giscus mapping
+threadId: zohdi-hero         # permanent; giscus mapping (not `id`, to avoid confusion with Astro's entry id)
 draft: true                  # excluded from production builds
 cover: ./cover.png           # optional OG override
 discuss:                     # optional
@@ -93,7 +93,7 @@ Site (from the mockup):
 - Header (menu button on phones), theme toggle (system default, remembered choice, no-flash head script), footer ("Built with Astro, source on GitHub").
 - Home: intro, topic filter, year groups, entries with Talk/Medium labels, about card with photo, Follow (RSS with copy URL, GitHub, LinkedIn).
 - Post: back link, header (date, reading time, tags), 720 px reading column, desktop "On this page" side menu (active section, minutes left, Copy link, LinkedIn, Back to top), phone section bar (current section + progress, tap for list), top progress bar on desktop, heading `#` anchors, author card, Discuss block, giscus, next post.
-- `<giscus-comments>`: lazy-loads near the viewport, follows the site theme, custom theme CSS served from blog.zohdi.me (check giscus' CORS requirement in the plan).
+- `<giscus-comments>`: lazy-loads near the viewport, follows the site theme, custom theme CSS served from blog.zohdi.me with `Access-Control-Allow-Origin: https://giscus.app` (set in `public/_headers`).
 - Works without JS: everything readable, TOC links work, filter shows all. Only comments and copy buttons need JS.
 - Accessibility: real buttons/links, visible focus, reduced motion respected, contrast checked in both themes.
 
@@ -110,7 +110,7 @@ Layout numbers: container max 1104 px; home = list + 280 px sidebar; post = 720 
 
 ## 5. Quality, testing, launch
 
-Build gate (`npm run build`, also the Cloudflare build command): frontmatter schema, duplicate `id`/slug check, `astro check`, unit tests, internal link and image check on `dist`, no drafts in output. Any failure means no deploy.
+Build gate (`npm run build`, also the Cloudflare build command): frontmatter schema, duplicate `threadId`/reserved slug check, `astro check`, unit tests, internal link and image check on `dist`, no drafts in output. Any failure means no deploy.
 
 Tests:
 
