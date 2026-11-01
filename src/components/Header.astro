@@ -1,0 +1,44 @@
+---
+import ThemeToggle from './ThemeToggle.astro';
+
+interface Props {
+  current?: 'posts' | 'tags';
+}
+const { current } = Astro.props;
+const links = [
+  { href: '/', label: 'Posts', key: 'posts' },
+  { href: '/tags/', label: 'Tags', key: 'tags' },
+  { href: '/rss.xml', label: 'RSS' },
+  { href: 'https://zohdi.me/', label: 'zohdi.me' },
+];
+---
+<header class="container site-h">
+  <a class="brand" href="/">
+    <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--accent-fill)"></rect><polygon fill="#fff" points="17,15 47,15 47,22 28,42 47,42 47,49 17,49 17,42 36,22 17,22"></polygon></svg>
+    <b>Zohdi</b>
+    <span>blog</span>
+  </a>
+  <div class="h-right">
+    <nav class="nav" aria-label="Main">
+      {links.map((l) => <a href={l.href} aria-current={l.key && l.key === current ? 'page' : undefined}>{l.label}</a>)}
+    </nav>
+    <ThemeToggle />
+    <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="m-nav" aria-label="Menu" data-menu-btn>
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"></path></svg>
+    </button>
+  </div>
+</header>
+<nav class="m-nav container" id="m-nav" aria-label="Main menu" hidden>
+  {links.map((l) => <a href={l.href}>{l.label}</a>)}
+</nav>
+
+<script>
+  const button = document.querySelector<HTMLButtonElement>('[data-menu-btn]');
+  const nav = document.getElementById('m-nav');
+  button?.addEventListener('click', () => {
+    if (!nav) return;
+    const open = nav.hidden;
+    nav.hidden = !open;
+    button.setAttribute('aria-expanded', String(open));
+  });
+</script>

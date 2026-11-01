@@ -1,0 +1,50 @@
+---
+import '@fontsource/alexandria/600.css';
+import '@fontsource/alexandria/700.css';
+import '@fontsource/ibm-plex-sans/400.css';
+import '@fontsource/ibm-plex-sans/500.css';
+import '@fontsource/ibm-plex-sans/600.css';
+import '@fontsource/ibm-plex-mono/400.css';
+import '@fontsource/ibm-plex-mono/500.css';
+import '../styles/tokens.css';
+import '../styles/global.css';
+import '../styles/prose.css';
+import Analytics from '../components/Analytics.astro';
+import Footer from '../components/Footer.astro';
+import Header from '../components/Header.astro';
+import Seo, { type Props as SeoProps } from '../components/Seo.astro';
+
+type Props = SeoProps & { current?: 'posts' | 'tags' };
+const { current, ...seo } = Astro.props;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Must run before any CSS so the page never flashes the wrong theme -->
+    <script is:inline>
+      (function () {
+        var saved = null;
+        try { saved = localStorage.getItem('theme'); } catch (e) {}
+        var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+        document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+      })();
+    </script>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <Seo {...seo} />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="alternate" type="application/rss+xml" title="Zohdi blog" href="/rss.xml" />
+    <Analytics />
+  </head>
+  <body>
+    <a class="skip" href="#content">Skip to content</a>
+    <Header current={current} />
+    <slot />
+    <Footer />
+    <script>
+      import '../scripts/copy-buttons';
+    </script>
+  </body>
+</html>

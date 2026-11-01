@@ -1,4 +1,6 @@
 ---
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
-<!doctype html>
-<html lang="en"><head><meta charset="utf-8" /><title>blog</title></head><body><h1>blog</h1></body></html>
+<BaseLayout current="posts">
+  <main class="container" id="content"><section class="intro"><h1>Notes from building for the web</h1></section></main>
+</BaseLayout>
