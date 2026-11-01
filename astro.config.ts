@@ -9,7 +9,7 @@ export default defineConfig({
   site: 'https://blog.zohdi.me',
   trailingSlash: 'always',
   build: { format: 'directory' },
-  integrations: [mdx(), sitemap({ filter: (page) => !page.includes('/404') })],
+  integrations: [mdx(), sitemap({ filter: (page) => !page.endsWith('/404/') })],
   markdown: {
     shikiConfig: {
       theme: blueprint,
