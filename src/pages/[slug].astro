@@ -33,10 +33,10 @@ const suggestion = older ?? newer;
     <header class="post-head">
       <h1>{title}</h1>
       <p class="meta">
-        <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>
-        {updatedDate && <span>Updated {formatDate(updatedDate)}</span>}
-        <span>{minutes} min read</span>
-        <span class="chips">{tags.map((t) => <a class="chip" href={`/tags/${t}/`}>{t}</a>)}</span>
+        <time datetime={isoDate(pubDate)}>{formatDate(pubDate)}</time>{' '}
+        {updatedDate && <><span>Updated {formatDate(updatedDate)}</span>{' '}</>}
+        <span>{minutes} min read</span>{' '}
+        <span class="chips">{tags.map((t) => <>{' '}<a class="chip" href={`/tags/${t}/`}>{t}</a></>)}</span>
       </p>
     </header>
     <div class="post-grid">
@@ -48,7 +48,7 @@ const suggestion = older ?? newer;
           <AuthorCard />
           <Discuss threadId={threadId} discuss={discuss} />
           {suggestion && (
-            <a class="next" href={`/${suggestion.id}/`}><small>{suggestion === older ? 'Previous post' : 'Next post'}</small><b>{suggestion.data.title}</b></a>
+            <a class="next" href={`/${suggestion.id}/`}><small>{suggestion === older ? 'Previous post' : 'Next post'}</small>{' '}<b>{suggestion.data.title}</b></a>
           )}
         </div>
       </div>

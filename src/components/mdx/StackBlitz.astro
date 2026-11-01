@@ -13,7 +13,7 @@ const embed = `${url}?embed=1&view=preview${file ? `&file=${encodeURIComponent(f
 <stackblitz-embed class="demo" data-src={embed} data-id={id} data-title={title}>
   <p class="demo-title">{title}</p>
   <div class="demo-actions">
-    <button class="btn" type="button" data-load hidden>Load interactive demo</button>
+    <button class="btn" type="button" data-load hidden>Load interactive demo</button>{' '}
     <a class="small-btn" href={url} target="_blank" rel="noopener">Open on StackBlitz</a>
   </div>
   <p class="demo-note" data-note hidden>Loading it here connects to stackblitz.com.</p>

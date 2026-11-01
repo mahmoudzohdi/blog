@@ -6,9 +6,9 @@ const year = new Date().getFullYear();
   <div class="site-f">
     <span>© {year} {SITE.author}. Built with Astro, <a href={SITE.links.repo}>source on GitHub</a>.</span>
     <nav aria-label="Elsewhere">
-      <a href="/rss.xml">RSS</a>
-      <a href={SITE.links.github}>GitHub</a>
-      <a href={SITE.links.linkedin}>LinkedIn</a>
+      <a href="/rss.xml">RSS</a>{' '}
+      <a href={SITE.links.github}>GitHub</a>{' '}
+      <a href={SITE.links.linkedin}>LinkedIn</a>{' '}
       <a href={SITE.links.home}>zohdi.me</a>
     </nav>
   </div>

@@ -17,7 +17,7 @@ const label = (i: FeedItem) => (i.draft ? 'Draft' : i.external ? (i.kind === 'ta
     {topics.length > 1 && (
       <div class="filter" role="group" aria-label="Filter by topic">
         <button type="button" data-filter="all" aria-pressed="true">All</button>
-        {topics.map((t) => <button type="button" data-filter={t} aria-pressed="false">{t}</button>)}
+        {topics.map((t) => <>{' '}<button type="button" data-filter={t} aria-pressed="false">{t}</button></>)}
       </div>
     )}
     {groups.map((g) => (
@@ -28,14 +28,14 @@ const label = (i: FeedItem) => (i.draft ? 'Draft' : i.external ? (i.kind === 'ta
             <li data-tags={i.tags.join(' ')}>
               <div class="when-col">
                 <time class="when" datetime={isoDate(i.date)}>{formatDayMonth(i.date)}</time>
-                {label(i) && <span class="kind">{label(i)}</span>}
+                {label(i) && <>{' '}<span class="kind">{label(i)}</span></>}
               </div>
               <div>
                 <h3>
                   <a href={i.url} data-event={i.external ? 'outbound' : undefined} data-event-label={i.where}>{i.title}{i.external && (<svg class="ext" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label={`(opens ${i.where})`}><path d="M7 17 17 7M8 7h9v9"></path></svg>)}</a>
                 </h3>
                 {i.description && <p>{i.description}</p>}
-                <div class="chips">{i.tags.map((t) => <a class="chip" href={`/tags/${t}/`}>{t}</a>)}</div>
+                <div class="chips">{i.tags.map((t) => <>{' '}<a class="chip" href={`/tags/${t}/`}>{t}</a></>)}</div>
               </div>
             </li>
           ))}

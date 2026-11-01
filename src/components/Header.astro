@@ -15,12 +15,12 @@ const links = [
 <header class="container site-h">
   <a class="brand" href="/">
     <svg width="32" height="32" viewBox="0 0 64 64" aria-hidden="true"><rect width="64" height="64" rx="14" fill="var(--accent-fill)"></rect><polygon fill="#fff" points="17,15 47,15 47,22 28,42 47,42 47,49 17,49 17,42 36,22 17,22"></polygon></svg>
-    <b>Zohdi</b>
+    <b>Zohdi</b>{' '}
     <span>blog</span>
   </a>
   <div class="h-right">
     <nav class="nav" aria-label="Main">
-      {links.map((l) => <a href={l.href} aria-current={l.key && l.key === current ? 'page' : undefined}>{l.label}</a>)}
+      {links.map((l) => <>{' '}<a href={l.href} aria-current={l.key && l.key === current ? 'page' : undefined}>{l.label}</a></>)}
     </nav>
     <ThemeToggle />
     <button class="icon-btn menu-btn" type="button" aria-expanded="false" aria-controls="m-nav" aria-label="Menu" data-menu-btn>
@@ -29,7 +29,7 @@ const links = [
   </div>
 </header>
 <nav class="m-nav container" id="m-nav" aria-label="Main menu" hidden>
-  {links.map((l) => <a href={l.href} aria-current={l.key && l.key === current ? 'page' : undefined}>{l.label}</a>)}
+  {links.map((l) => <>{' '}<a href={l.href} aria-current={l.key && l.key === current ? 'page' : undefined}>{l.label}</a></>)}
 </nav>
 
 <script>
