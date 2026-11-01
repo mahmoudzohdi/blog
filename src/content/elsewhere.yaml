@@ -1,0 +1,16 @@
+- id: nasa-space-apps-cairo-2026
+  title: "Web development as a tool: turn your idea into a live prototype"
+  url: https://talks.zohdi.me/nasa-space-apps-cairo-2026/
+  date: 2026-10-30
+  kind: talk
+  where: NASA Space Apps Cairo
+  description: Workshop at NASA Space Apps Cairo. Slides on talks.zohdi.me.
+  tags: [talks]
+
+- id: login-first-modal-medium
+  title: Create reusable “Login First” modal before the user action with Vue.js + Vuex
+  url: https://medium.com/@mahmoud.zohdi/create-reusable-login-first-modal-before-the-user-action-with-vue-js-vuex-caa7038b352b
+  date: 2019-10-24
+  kind: article
+  where: Medium
+  tags: [vue, vuex]

@@ -1,0 +1,83 @@
+---
+title: Component showcase
+description: Every building block a post can use, on one page. Draft only, used by the tests and as a writing reference.
+pubDate: 2026-11-01
+tags: [meta]
+threadId: showcase
+draft: true
+---
+import { Callout, Figure, StackBlitz, Steps } from '@/components/mdx';
+import sample from './sample.png';
+
+This page is never published. It shows every component a post can use, and the end-to-end tests run against it.
+
+## Text
+
+Paragraphs use the reading font at 18 pixels with generous line height. Inline `code` sits in a light box, and links look [like this](https://zohdi.me/).
+
+<Callout type="note">
+
+A note adds context the reader might otherwise miss.
+
+</Callout>
+
+<Callout type="tip">
+
+A tip suggests a better way to do something.
+
+</Callout>
+
+<Callout type="warning">
+
+A warning flags something that can break.
+
+</Callout>
+
+## Flows and figures
+
+<Steps highlight={2} caption="What happens when a logged-out user clicks “Add to cart”.">
+
+1. User clicks “Add to cart”
+2. Not logged in: save the action and open the auth modal
+3. User logs in or signs up
+4. Modal closes and the saved action runs
+
+</Steps>
+
+<Figure src={sample} alt="Three shapes on a grey background" caption="A figure with an optimised image." />
+
+## Code
+
+### Highlighted lines
+
+```js title="store/modules/auth.js" {3,8}
+// AuthModule: the store owns the modal's visibility
+const state = {
+  authModal: { visibility: false }
+}
+
+const mutations = {
+  setAuthModalVisibility (state, visibility) {
+    state.authModal.visibility = visibility
+  }
+}
+```
+
+### A diff
+
+```ts title="track.ts"
+export function track(name: string) {
+  window.umami.track(name) // [!code --]
+  window.umami?.track(name) // [!code ++]
+}
+```
+
+### No title
+
+```bash
+npm run build
+```
+
+## Demos
+
+<StackBlitz id="vitejs-vite" title="A StackBlitz project, loaded on click" />
