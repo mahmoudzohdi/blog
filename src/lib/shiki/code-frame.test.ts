@@ -18,6 +18,7 @@ describe('transformerCodeFrame', () => {
     expect(html.startsWith('<figure class="code-block" data-lang="js">')).toBe(true);
     expect(html).toContain('<span class="code-title">src/a.js</span>');
     expect(html).toContain('<span class="code-lang">JavaScript</span>');
+    expect(html).toContain('<span class="code-title">src/a.js</span> <span class="code-lang">JavaScript</span> <button');
     expect(html).toContain('<button type="button" class="code-copy" aria-label="Copy code"><span data-label="">Copy</span></button>');
     expect(html).toMatch(/<span class="line highlighted">/);
   });

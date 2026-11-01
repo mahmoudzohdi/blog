@@ -32,7 +32,7 @@ const label = (i: FeedItem) => (i.draft ? 'Draft' : i.external ? (i.kind === 'ta
               </div>
               <div>
                 <h3>
-                  <a href={i.url} data-event={i.external ? 'outbound' : undefined} data-event-label={i.where}>{i.title}{i.external && (<svg class="ext" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label={`(opens ${i.where})`}><path d="M7 17 17 7M8 7h9v9"></path></svg>)}</a>
+                  <a href={i.url} data-event={i.external ? 'outbound' : undefined} data-event-label={i.where}>{i.title}{i.external && (<svg class="ext" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 17 17 7M8 7h9v9"></path></svg>)}{i.external && <span class="sr-only">{` (opens ${i.where})`}</span>}</a>
                 </h3>
                 {i.description && <p>{i.description}</p>}
                 <div class="chips">{i.tags.map((t) => <>{' '}<a class="chip" href={`/tags/${t}/`}>{t}</a></>)}</div>

@@ -36,13 +36,15 @@ export function transformerCodeFrame(): ShikiTransformer {
       if (!pre) return;
       const lang = this.options.lang;
       const title = titleOf(this.options.meta?.__raw);
-      const header = el('div', { className: ['code-header'] }, [
+      const parts = [
         ...(title ? [el('span', { className: ['code-title'] }, [text(title)])] : []),
         el('span', { className: ['code-lang'] }, [text(languageName(lang))]),
         el('button', { type: 'button', className: ['code-copy'], ariaLabel: 'Copy code' }, [
           el('span', { dataLabel: '' }, [text('Copy')]),
         ]),
-      ]);
+      ];
+      // Spaces between the parts so they don't run together for assistive tech and copy/paste
+      const header = el('div', { className: ['code-header'] }, parts.flatMap((p, i) => (i ? [text(' '), p] : [p])));
       root.children = [el('figure', { className: ['code-block'], dataLang: lang }, [header, pre])];
     },
   };

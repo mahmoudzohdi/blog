@@ -42,6 +42,7 @@ img { max-width: 100%; height: auto; }
 .chip { font-size: 14px; padding: 4px 10px; border-radius: 999px; background: var(--surface); color: var(--ink); text-decoration: none; box-shadow: 0 0 0 1px var(--line); }
 .chip:hover { color: var(--ink); box-shadow: 0 0 0 1.5px var(--accent); }
 .ext { vertical-align: -2px; margin-left: 4px; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .small-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 36px; padding: 0 12px; border: 0; border-radius: 8px; background: var(--surface); color: var(--ink); font: 500 14px/1 var(--text); cursor: pointer; box-shadow: 0 0 0 1px var(--line); text-decoration: none; }
 .small-btn:hover { color: var(--ink); box-shadow: 0 0 0 1.5px var(--accent); }
 .small-btn.done { color: var(--accent); }
