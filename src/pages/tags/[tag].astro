@@ -1,0 +1,21 @@
+---
+import EntryList from '../../components/EntryList.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { buildFeed, collectTags, withTag } from '../../lib/feed';
+import { getElsewhere, getPosts } from '../../lib/posts';
+
+export async function getStaticPaths() {
+  const feed = buildFeed(await getPosts(), await getElsewhere());
+  return collectTags(feed).map(({ tag }) => ({ params: { tag }, props: { items: withTag(feed, tag) } }));
+}
+
+const { tag } = Astro.params;
+const { items } = Astro.props;
+---
+<BaseLayout title={`Tagged “${tag}”`} description={`Posts and talks about ${tag}.`} current="tags">
+  <main class="container" id="content">
+    <a class="back" href="/tags/"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"></path></svg>All tags</a>
+    <section class="intro"><h1>Tagged “{tag}”</h1></section>
+    <div class="home-grid single"><EntryList items={items} /></div>
+  </main>
+</BaseLayout>
