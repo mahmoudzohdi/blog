@@ -33,7 +33,8 @@ if (article) {
 
   const update = () => {
     const box = article.getBoundingClientRect();
-    const read = Math.min(1, Math.max(0, (innerHeight * 0.3 - box.top) / box.height));
+    const scrollable = box.height - innerHeight;
+    const read = scrollable <= 0 ? (box.bottom <= innerHeight ? 1 : 0) : Math.min(1, Math.max(0, -box.top / scrollable));
     if (progress) progress.style.width = `${read * 100}%`;
     if (secProgress) secProgress.style.width = `${read * 100}%`;
 
