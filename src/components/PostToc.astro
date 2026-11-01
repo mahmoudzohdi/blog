@@ -1,0 +1,33 @@
+---
+import type { MarkdownHeading } from 'astro';
+
+interface Props {
+  toc: MarkdownHeading[];
+  minutes: number;
+  shareUrl: string;
+}
+const { toc, minutes, shareUrl } = Astro.props;
+const linkedIn = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(shareUrl)}`;
+---
+<aside class="toc" aria-label="On this page">
+  {toc.length > 0 && (
+    <>
+      <h2>On this page</h2>
+      <ol>
+        {toc.map((h) => (
+          <li class={h.depth === 3 ? 'sub' : undefined}><a href={`#${h.slug}`} data-toc-link>{h.text}</a></li>
+        ))}
+      </ol>
+    </>
+  )}
+  <p class="left" data-minutes-left>{minutes} min read</p>
+  <h2>Share</h2>
+  <div class="share">
+    <button class="small-btn" type="button" data-copy-text={shareUrl} data-done="Link copied" data-event="copy_link">Copy link</button>
+    <a class="small-btn" href={linkedIn} target="_blank" rel="noopener" data-event="share_linkedin">LinkedIn</a>
+  </div>
+  <button class="small-btn" type="button" data-to-top>
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 15l-6-6-6 6"></path></svg>
+    Back to top
+  </button>
+</aside>
