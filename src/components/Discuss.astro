@@ -1,6 +1,96 @@
 ---
+import { GISCUS, SITE } from '../lib/site';
+
 interface Props {
   threadId: string;
   discuss?: { devto?: string; linkedin?: string };
 }
+const { threadId, discuss = {} } = Astro.props;
+const comments = Boolean(GISCUS.repoId && GISCUS.categoryId);
+const shared = Boolean(discuss.devto || discuss.linkedin);
 ---
+{(comments || shared) && (
+  <section class="discuss" aria-labelledby="discuss-h">
+    <h2 id="discuss-h">Discuss</h2>
+    {comments && <p>Comment below with your GitHub account.</p>}
+    {shared && (
+      <>
+        <p>You can also join the conversation where this post was shared.</p>
+        <div class="btn-row">
+          {discuss.devto && <a class="btn" href={discuss.devto} data-event="discuss_click" data-event-label="devto">Discuss on dev.to</a>}{' '}
+          {discuss.linkedin && <a class="btn" href={discuss.linkedin} data-event="discuss_click" data-event-label="linkedin">Discuss on LinkedIn</a>}
+        </div>
+      </>
+    )}
+    {comments && (
+      <giscus-comments
+        data-repo={GISCUS.repo}
+        data-repo-id={GISCUS.repoId}
+        data-category={GISCUS.category}
+        data-category-id={GISCUS.categoryId}
+        data-term={threadId}
+        data-theme-base={`${SITE.url}/giscus`}
+      >
+        <div class="giscus"></div>
+        <p class="giscus-fallback" hidden>Comments couldn't load. <a href={`${SITE.links.repo}/discussions`}>Open the discussions on GitHub</a>.</p>
+      </giscus-comments>
+    )}
+  </section>
+)}
+
+<script>
+  class GiscusComments extends HTMLElement {
+    connectedCallback() {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          if (entries.some((e) => e.isIntersecting)) {
+            observer.disconnect();
+            this.load();
+          }
+        },
+        { rootMargin: '600px 0px' },
+      );
+      observer.observe(this);
+      addEventListener('themechange', () => this.syncTheme());
+    }
+
+    themeUrl() {
+      const theme = document.documentElement.dataset.theme === 'dark' ? 'dark' : 'light';
+      return `${this.dataset.themeBase}/${theme}.css`;
+    }
+
+    load() {
+      const script = document.createElement('script');
+      script.src = 'https://giscus.app/client.js';
+      const attributes: Record<string, string> = {
+        repo: this.dataset.repo ?? '',
+        'repo-id': this.dataset.repoId ?? '',
+        category: this.dataset.category ?? '',
+        'category-id': this.dataset.categoryId ?? '',
+        mapping: 'specific',
+        term: this.dataset.term ?? '',
+        strict: '1',
+        'reactions-enabled': '1',
+        'emit-metadata': '0',
+        'input-position': 'top',
+        theme: this.themeUrl(),
+        lang: 'en',
+        loading: 'lazy',
+      };
+      for (const [name, value] of Object.entries(attributes)) script.setAttribute(`data-${name}`, value);
+      script.crossOrigin = 'anonymous';
+      script.async = true;
+      script.addEventListener('error', () => {
+        const fallback = this.querySelector<HTMLElement>('.giscus-fallback');
+        if (fallback) fallback.hidden = false;
+      });
+      this.append(script);
+    }
+
+    syncTheme() {
+      const frame = this.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+      frame?.contentWindow?.postMessage({ giscus: { setConfig: { theme: this.themeUrl() } } }, 'https://giscus.app');
+    }
+  }
+  customElements.define('giscus-comments', GiscusComments);
+</script>
