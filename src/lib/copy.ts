@@ -8,6 +8,8 @@ export async function copyText(text: string): Promise<boolean> {
   }
 }
 
+const timers = new WeakMap<HTMLElement, number>();
+
 /** Shows a short confirmation on a button, then restores its label. */
 export function flash(button: HTMLElement, label: string, ms = 1600): void {
   const target = button.querySelector<HTMLElement>('[data-label]') ?? button;
@@ -15,8 +17,15 @@ export function flash(button: HTMLElement, label: string, ms = 1600): void {
   target.dataset.original = original;
   target.textContent = label;
   button.classList.add('done');
-  window.setTimeout(() => {
-    target.textContent = original;
-    button.classList.remove('done');
-  }, ms);
+
+  const previous = timers.get(button);
+  if (previous !== undefined) window.clearTimeout(previous);
+  timers.set(
+    button,
+    window.setTimeout(() => {
+      target.textContent = original;
+      button.classList.remove('done');
+      timers.delete(button);
+    }, ms),
+  );
 }

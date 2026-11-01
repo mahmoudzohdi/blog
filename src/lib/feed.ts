@@ -53,6 +53,7 @@ export function buildFeed(posts: PostLike[], elsewhere: ElsewhereLike[]): FeedIt
   return [...fromPosts, ...fromElsewhere].sort((a, b) => b.date.getTime() - a.date.getTime());
 }
 
+/** Groups items by UTC year, newest year first. Expects items already sorted newest first (as buildFeed returns them) and keeps that order within a year. */
 export function groupByYear(items: FeedItem[]): { year: number; items: FeedItem[] }[] {
   const years = new Map<number, FeedItem[]>();
   for (const item of items) {
