@@ -1,0 +1,20 @@
+---
+interface Props {
+  type?: 'note' | 'tip' | 'warning';
+}
+const { type = 'note' } = Astro.props;
+const label = { note: 'Note', tip: 'Tip', warning: 'Warning' }[type];
+---
+<aside class={`callout callout-${type}`} role="note">
+  {type === 'warning' ? (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 2 20h20L12 3zM12 10v4M12 17v.5"></path></svg>
+  ) : type === 'tip' ? (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"></path></svg>
+  ) : (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5M12 7.5v.5"></path></svg>
+  )}
+  <div>
+    <p class="callout-label">{label}</p>
+    <slot />
+  </div>
+</aside>

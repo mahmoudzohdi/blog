@@ -1,0 +1,45 @@
+---
+interface Props {
+  /** StackBlitz project id, from https://stackblitz.com/edit/<id> */
+  id: string;
+  title: string;
+  /** File to open, e.g. "src/App.vue" */
+  file?: string;
+}
+const { id, title, file } = Astro.props;
+const url = `https://stackblitz.com/edit/${id}`;
+const embed = `${url}?embed=1&view=preview${file ? `&file=${encodeURIComponent(file)}` : ''}`;
+---
+<stackblitz-embed class="demo" data-src={embed} data-id={id} data-title={title}>
+  <p class="demo-title">{title}</p>
+  <div class="demo-actions">
+    <button class="btn" type="button" data-load hidden>Load interactive demo</button>
+    <a class="small-btn" href={url} target="_blank" rel="noopener">Open on StackBlitz</a>
+  </div>
+  <p class="demo-note" data-note hidden>Loading it here connects to stackblitz.com.</p>
+</stackblitz-embed>
+
+<script>
+  import { track } from '../../lib/track';
+
+  class StackBlitzEmbed extends HTMLElement {
+    connectedCallback() {
+      const button = this.querySelector<HTMLButtonElement>('[data-load]');
+      const note = this.querySelector<HTMLElement>('[data-note]');
+      if (!button || !note) return;
+      button.hidden = false;
+      note.hidden = false;
+      button.addEventListener('click', () => {
+        const frame = document.createElement('iframe');
+        frame.src = this.dataset.src ?? '';
+        frame.title = this.dataset.title ?? 'Interactive demo';
+        frame.loading = 'lazy';
+        this.append(frame);
+        button.remove();
+        note.remove();
+        track('load_demo', { id: this.dataset.id ?? '' });
+      });
+    }
+  }
+  customElements.define('stackblitz-embed', StackBlitzEmbed);
+</script>

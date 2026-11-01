@@ -1,0 +1,12 @@
+---
+interface Props {
+  /** 1-based number of the step to emphasise (1–6). */
+  highlight?: number;
+  caption?: string;
+}
+const { highlight, caption } = Astro.props;
+---
+<figure class="flow" data-highlight={highlight}>
+  <slot />
+  {caption && <figcaption>{caption}</figcaption>}
+</figure>
