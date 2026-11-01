@@ -1,0 +1,36 @@
+:root {
+  --paper: #eef0f3;
+  --surface: #ffffff;
+  --ink: #23272e;
+  --muted: #5a6372;
+  --line: #dde2ea;
+  --accent: #1d3db0;
+  --accent-fill: #1d3db0;
+  --on-accent: #ffffff;
+  --faience: #2fa89c;
+  --warn: #b4532a;
+  --code-bg: #0a1257;
+  --code-ink: #d6e0ff;
+  --code-dim: #7d88b8;
+  --code-mark: #8fe3d8;
+  --code-edge: transparent;
+  --shadow: 0 1px 2px rgb(20 44 133 / 0.08), 0 18px 40px -18px rgb(20 44 133 / 0.35);
+  --display: "Alexandria", system-ui, sans-serif;
+  --text: "IBM Plex Sans", system-ui, sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, monospace;
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --paper: #0e1330;
+  --surface: #161d45;
+  --ink: #e8ebf5;
+  --muted: #a3acc4;
+  --line: #2a3363;
+  --accent: #9db0ff;
+  --accent-fill: #3858e4;
+  --warn: #f08a5d;
+  --code-edge: #2a3363;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 18px 40px -18px rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}
