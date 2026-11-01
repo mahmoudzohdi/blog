@@ -1,6 +1,26 @@
 ---
+import AboutCard from '../components/AboutCard.astro';
+import EntryList from '../components/EntryList.astro';
+import FollowList from '../components/FollowList.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { buildFeed, collectTags } from '../lib/feed';
+import { getElsewhere, getPosts } from '../lib/posts';
+
+const feed = buildFeed(await getPosts(), await getElsewhere());
+const topics = collectTags(feed).map((t) => t.tag);
 ---
 <BaseLayout current="posts">
-  <main class="container" id="content"><section class="intro"><h1>Notes from building for the web</h1></section></main>
+  <main class="container" id="content">
+    <section class="intro">
+      <h1>Notes from building for the web</h1>
+      <p>I'm Mahmoud Zohdi, a senior software engineer who works mostly on the frontend. I write about what I build at work and on the side, and what it taught me.</p>
+    </section>
+    <div class="home-grid">
+      <EntryList items={feed} topics={topics} />
+      <aside class="side" aria-label="About and follow">
+        <AboutCard />
+        <FollowList />
+      </aside>
+    </div>
+  </main>
 </BaseLayout>

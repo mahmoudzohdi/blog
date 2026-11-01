@@ -1,0 +1,89 @@
+---
+import type { FeedItem } from '../lib/feed';
+import { groupByYear } from '../lib/feed';
+import { formatDayMonth, isoDate } from '../lib/dates';
+
+interface Props {
+  items: FeedItem[];
+  /** Topics for the filter buttons. The filter only shows with two or more. */
+  topics?: string[];
+}
+const { items, topics = [] } = Astro.props;
+const groups = groupByYear(items);
+const label = (i: FeedItem) => (i.draft ? 'Draft' : i.external ? (i.kind === 'talk' ? 'Talk' : i.where) : undefined);
+---
+<section class="feed" aria-label="Writing and talks">
+  <topic-filter>
+    {topics.length > 1 && (
+      <div class="filter" role="group" aria-label="Filter by topic">
+        <button type="button" data-filter="all" aria-pressed="true">All</button>
+        {topics.map((t) => <button type="button" data-filter={t} aria-pressed="false">{t}</button>)}
+      </div>
+    )}
+    {groups.map((g) => (
+      <div class="group">
+        <h2 class="year">{g.year}</h2>
+        <ol class="entries">
+          {g.items.map((i) => (
+            <li data-tags={i.tags.join(' ')}>
+              <div class="when-col">
+                <time class="when" datetime={isoDate(i.date)}>{formatDayMonth(i.date)}</time>
+                {label(i) && <span class="kind">{label(i)}</span>}
+              </div>
+              <div>
+                <h3>
+                  <a href={i.url} data-event={i.external ? 'outbound' : undefined} data-event-label={i.where}>{i.title}{i.external && (<svg class="ext" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" role="img" aria-label={`(opens ${i.where})`}><path d="M7 17 17 7M8 7h9v9"></path></svg>)}</a>
+                </h3>
+                {i.description && <p>{i.description}</p>}
+                <div class="chips">{i.tags.map((t) => <a class="chip" href={`/tags/${t}/`}>{t}</a>)}</div>
+              </div>
+            </li>
+          ))}
+        </ol>
+      </div>
+    ))}
+    <p class="empty filter-empty" hidden>Nothing on this topic yet.</p>
+    {items.length === 0 && <p class="empty">No posts yet.</p>}
+  </topic-filter>
+</section>
+
+<script>
+  import { track } from '../lib/track';
+
+  class TopicFilter extends HTMLElement {
+    connectedCallback() {
+      const buttons = [...this.querySelectorAll<HTMLButtonElement>('[data-filter]')];
+      if (buttons.length === 0) return;
+      const apply = (topic: string) => {
+        let shown = 0;
+        for (const b of buttons) b.setAttribute('aria-pressed', String(b.dataset.filter === topic));
+        for (const group of this.querySelectorAll<HTMLElement>('.group')) {
+          let inGroup = 0;
+          for (const li of group.querySelectorAll<HTMLElement>('.entries li')) {
+            const match = topic === 'all' || (li.dataset.tags ?? '').split(' ').includes(topic);
+            li.hidden = !match;
+            if (match) inGroup++;
+          }
+          group.hidden = inGroup === 0;
+          shown += inGroup;
+        }
+        const empty = this.querySelector<HTMLElement>('.filter-empty');
+        if (empty) empty.hidden = shown > 0;
+      };
+      for (const b of buttons) {
+        b.addEventListener('click', () => {
+          const topic = b.dataset.filter ?? 'all';
+          apply(topic);
+          const url = new URL(location.href);
+          if (topic === 'all') url.searchParams.delete('topic');
+          else url.searchParams.set('topic', topic);
+          history.replaceState(null, '', url);
+          track('filter_topic', { topic });
+        });
+      }
+      const initial = new URL(location.href).searchParams.get('topic');
+      if (initial && buttons.some((b) => b.dataset.filter === initial)) apply(initial);
+    }
+  }
+  customElements.define('topic-filter', TopicFilter);
+</script>
