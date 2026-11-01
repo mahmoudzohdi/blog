@@ -29,7 +29,7 @@ const links = [
   </div>
 </header>
 <nav class="m-nav container" id="m-nav" aria-label="Main menu" hidden>
-  {links.map((l) => <a href={l.href}>{l.label}</a>)}
+  {links.map((l) => <a href={l.href} aria-current={l.key && l.key === current ? 'page' : undefined}>{l.label}</a>)}
 </nav>
 
 <script>
