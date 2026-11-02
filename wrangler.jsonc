@@ -1,0 +1,14 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  // Must match the Worker name in the Cloudflare dashboard, or Workers Builds fails.
+  "name": "blog",
+  "compatibility_date": "2026-10-01",
+
+  // Static site only, no Worker code. Only blog.zohdi.me serves it.
+  "workers_dev": false,
+  "preview_urls": false,
+  "routes": [{ "pattern": "blog.zohdi.me", "custom_domain": true }],
+
+  // Astro writes /slug/index.html; /slug redirects to /slug/. Unknown paths get dist/404.html.
+  "assets": { "directory": "./dist", "not_found_handling": "404-page", "html_handling": "auto-trailing-slash" }
+}
