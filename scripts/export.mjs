@@ -12,7 +12,15 @@ if (!slug || !PLATFORMS.includes(platform)) {
   process.exit(1);
 }
 
-const source = await readFile(`src/content/posts/${slug}/index.mdx`, 'utf8');
+const path = `src/content/posts/${slug}/index.mdx`;
+let source;
+try {
+  source = await readFile(path, 'utf8');
+} catch (err) {
+  if (err.code !== 'ENOENT') throw err;
+  console.error(`No post at ${path}`);
+  process.exit(1);
+}
 const data = parseFrontmatter(source);
 const body = source.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, '');
 const canonical = `${SITE}/${slug}/`;

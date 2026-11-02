@@ -37,7 +37,65 @@ describe('toMarkdown', () => {
 
   it('cleans code fences but never touches code inside them', () => {
     const body = '```jsx title="App.jsx" {2}\nconst a = <Counter />\nb() // [!code ++]\n```';
-    expect(toMarkdown(body, opts)).toBe('**App.jsx**\n\n```jsx\nconst a = <Counter />\nb()\n```\n');
+    expect(toMarkdown(body, opts)).toBe('**App.jsx**\n\n```diff\n const a = <Counter />\n+b()\n```\n');
+  });
+
+  it('leaves components inside inline code alone', () => {
+    expect(toMarkdown('Use the `<Counter />` component to render it.', opts)).toBe('Use the `<Counter />` component to render it.\n');
+  });
+
+  it('still replaces an unknown component that wraps inline code', () => {
+    expect(toMarkdown('<Tabs>\n\nRun `npm i` first.\n\n</Tabs>', opts)).toBe(
+      '[See the interactive version on blog.zohdi.me](https://blog.zohdi.me/p/?utm_source=devto)\n',
+    );
+  });
+
+  it('turns JSX space expressions into plain spaces', () => {
+    expect(toMarkdown("Click [here](https://x){' '}to continue.", opts)).toBe('Click [here](https://x) to continue.\n');
+    expect(toMarkdown('Click [here](https://x){" "}to continue.', opts)).toBe('Click [here](https://x) to continue.\n');
+  });
+
+  it('keeps indented fences inside list items intact', () => {
+    const body = '1. Render it:\n\n   ```jsx\n   const el = <Counter start={1} />\n   ```';
+    expect(toMarkdown(body, opts)).toBe(`${body}\n`);
+  });
+
+  it('keeps ~~~ fences, and longer fences that wrap shorter ones', () => {
+    const tilde = '~~~jsx\nconst el = <Counter />\n~~~';
+    expect(toMarkdown(tilde, opts)).toBe(`${tilde}\n`);
+    const nested = '````md\n```jsx\n<Counter />\n```\n````';
+    expect(toMarkdown(nested, opts)).toBe(`${nested}\n`);
+  });
+
+  it('never collapses blank lines inside code', () => {
+    const body = '```py\na = 1\n\n\nb = 2\n```';
+    expect(toMarkdown(body, opts)).toBe(`${body}\n`);
+  });
+
+  it('strips non-diff notation in any comment style and keeps the language', () => {
+    expect(toMarkdown('```py\nx = 1  # [!code warning]\n```', opts)).toBe('```py\nx = 1\n```\n');
+    expect(toMarkdown('```html\n<div>Oops</div> <!-- [!code warning] -->\n```', opts)).toBe('```html\n<div>Oops</div>\n```\n');
+    expect(toMarkdown('```css\na { color: red; } /* [!code highlight] */\n```', opts)).toBe('```css\na { color: red; }\n```\n');
+    expect(toMarkdown('```js\ntrack() // [!code word:track]\n```', opts)).toBe('```js\ntrack()\n```\n');
+  });
+
+  it('turns ++/-- notation into a diff block', () => {
+    const body = [
+      '```ts title="track.ts"',
+      'export function track(name: string) {',
+      '  window.umami.track(name) // [!code --]',
+      '  window.umami?.track(name) // [!code ++]',
+      '}',
+      '```',
+    ].join('\n');
+    expect(toMarkdown(body, opts)).toBe(
+      ['**track.ts**', '', '```diff', ' export function track(name: string) {', '-  window.umami.track(name)', '+  window.umami?.track(name)', ' }', '```', ''].join('\n'),
+    );
+  });
+
+  it('puts diff markers after the indentation of an indented fence', () => {
+    const body = '1. Change it:\n\n   ```js\n   a() // [!code --]\n   b() // [!code ++]\n   ```';
+    expect(toMarkdown(body, opts)).toBe('1. Change it:\n\n   ```diff\n   -a()\n   +b()\n   ```\n');
   });
 });
 

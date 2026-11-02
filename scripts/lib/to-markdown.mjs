@@ -6,20 +6,55 @@ function attr(attrs, name) {
   return m ? (m[1] ?? m[2]) : undefined;
 }
 
-/** Applies fn to text outside fenced code blocks, and code to the fences themselves. */
+/**
+ * A fenced code block: ``` or ~~~ (three or more), optionally indented (inside a list item).
+ * It closes on a line with the same fence character, at least as long, so a ```` fence can show ``` examples.
+ */
+const FENCE = /^([ \t]*)((`|~)\3{2,})[^\n]*\n[\s\S]*?^[ \t]*\2\3*[ \t]*$/gm;
+
+/** A Shiki notation comment at the end of a line, in any comment style: `// [!code ++]`, `# [!code warning]`, `<!-- [!code focus] -->`, `[!code word:x]`. */
+const NOTATION = /[ \t]*(?:\/\/|#|\/\*|<!--)\s*\[!code ([a-z+-]+)(?:[:|][^\]]*)?\]\s*(?:\*\/|-->)?[ \t]*$/;
+
+const DIFF_MARKS = { '++': '+', '--': '-' };
+
+/** Applies text to everything outside fenced code blocks, and code to the fences themselves. */
 function splitByFences(source, text, code) {
-  return source
-    .split(/(^```[^\n]*\n[\s\S]*?^```[ \t]*$)/m)
-    .map((part, i) => (i % 2 === 1 ? code(part) : text(part)))
-    .join('');
+  let out = '';
+  let last = 0;
+  for (const m of source.matchAll(FENCE)) {
+    out += text(source.slice(last, m.index)) + code(m[0]);
+    last = m.index + m[0].length;
+  }
+  return out + text(source.slice(last));
 }
 
+/** Runs fn with single-line inline code spans masked, so prose transforms never rewrite `<Example />` in backticks. */
+function protectInlineCode(source, fn) {
+  const spans = [];
+  const masked = source.replace(/`[^`\n]+`/g, (span) => `\u0000${spans.push(span) - 1}\u0000`);
+  return fn(masked).replace(/\u0000(\d+)\u0000/g, (_, i) => spans[i]);
+}
+
+/** Drops the title/line-highlight meta and Shiki notation; ++/-- notation turns the block into a diff. */
 function cleanFence(block) {
-  const [first, ...rest] = block.split('\n');
-  const lang = first.match(/^```(\S*)/)?.[1] ?? '';
-  const title = first.match(/title="([^"]+)"/)?.[1];
-  const body = rest.join('\n').replace(/[ \t]*\/\/ \[!code (?:\+\+|--|highlight|focus)\]/g, '');
-  return `${title ? `**${title}**\n\n` : ''}\`\`\`${lang}\n${body}`;
+  const lines = block.split('\n');
+  const closing = lines.pop();
+  const [open, ...content] = lines;
+  const [, indent, fence, lang] = open.match(/^([ \t]*)(`{3,}|~{3,})(\S*)/);
+  const title = open.match(/title="([^"]+)"/)?.[1];
+
+  const marks = content.map((line) => line.match(NOTATION)?.[1]);
+  const code = content.map((line) => line.replace(NOTATION, ''));
+  const isDiff = marks.some((mark) => mark in DIFF_MARKS);
+  const body = isDiff
+    ? code.map((line, i) => {
+        const rest = line.startsWith(indent) ? line.slice(indent.length) : line.trimStart();
+        return `${indent}${DIFF_MARKS[marks[i]] ?? ' '}${rest}`;
+      })
+    : code;
+
+  const heading = title ? `${indent}**${title}**\n\n` : '';
+  return heading + [`${indent}${fence}${isDiff ? 'diff' : lang}`, ...body, closing].join('\n');
 }
 
 /** Converts a post's MDX body into plain Markdown for dev.to, Hashnode and Medium. */
@@ -27,8 +62,9 @@ export function toMarkdown(body, { postUrl, assetBase }) {
   const images = {};
   const linkBack = `[See the interactive version on blog.zohdi.me](${postUrl})`;
 
-  const text = (part) => {
-    let out = part.replace(/^import\s+(\w+)\s+from\s+['"]\.\/([^'"]+)['"];?[ \t]*$/gm, (_, name, path) => {
+  const prose = (part) => {
+    let out = part.replace(/\{(['"]) \1\}/g, ' ');
+    out = out.replace(/^import\s+(\w+)\s+from\s+['"]\.\/([^'"]+)['"];?[ \t]*$/gm, (_, name, path) => {
       images[name] = `${assetBase}/${path}`;
       return '';
     });
@@ -51,10 +87,11 @@ export function toMarkdown(body, { postUrl, assetBase }) {
     out = out.replace(/<([A-Z]\w*)[^>]*?\/>/g, linkBack);
     out = out.replace(/<([A-Z]\w*)[^>]*>[\s\S]*?<\/\1>/g, linkBack);
     out = out.replace(/!\[([^\]]*)\]\(\.\/([^)\s]+)\)/g, (_, alt, path) => `![${alt}](${assetBase}/${path})`);
-    return out;
+    return out.replace(/\n{3,}/g, '\n\n');
   };
+  const text = (part) => protectInlineCode(part, prose);
 
-  return `${splitByFences(body, text, cleanFence).replace(/\n{3,}/g, '\n\n').trim()}\n`;
+  return `${splitByFences(body, text, cleanFence).trim()}\n`;
 }
 
 /** dev.to frontmatter: canonical URL back to the blog, up to four alphanumeric tags, unpublished draft. */
