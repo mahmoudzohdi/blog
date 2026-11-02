@@ -94,6 +94,11 @@ export function toMarkdown(body, { postUrl, assetBase }) {
   return `${splitByFences(body, text, cleanFence).trim()}\n`;
 }
 
+/** Cover for cross-posts: the post's own `cover` file (relative to the post folder) if set, otherwise the generated OG image. */
+export function coverUrl(cover, { assetBase, og }) {
+  return cover ? new URL(cover, `${assetBase}/`).href : og;
+}
+
 /** dev.to frontmatter: canonical URL back to the blog, up to four alphanumeric tags, unpublished draft. */
 export function devtoFrontmatter(data, { canonical, cover }) {
   const tags = data.tags.map((t) => t.replace(/[^a-z0-9]/gi, '').toLowerCase()).filter(Boolean).slice(0, 4);

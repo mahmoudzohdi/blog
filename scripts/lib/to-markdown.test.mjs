@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { devtoFrontmatter, toMarkdown } from './to-markdown.mjs';
+import { coverUrl, devtoFrontmatter, toMarkdown } from './to-markdown.mjs';
 
 const opts = { postUrl: 'https://blog.zohdi.me/p/?utm_source=devto', assetBase: 'https://raw.example/p' };
 
@@ -118,5 +118,18 @@ describe('devtoFrontmatter', () => {
         '',
       ].join('\n'),
     );
+  });
+});
+
+describe('coverUrl', () => {
+  const where = { assetBase: 'https://raw.example/p', og: 'https://blog.zohdi.me/og/p.png' };
+
+  it('uses the raw file URL of a custom cover', () => {
+    expect(coverUrl('./cover.png', where)).toBe('https://raw.example/p/cover.png');
+    expect(coverUrl('img/cover.png', where)).toBe('https://raw.example/p/img/cover.png');
+  });
+
+  it('falls back to the generated OG image', () => {
+    expect(coverUrl(undefined, where)).toBe('https://blog.zohdi.me/og/p.png');
   });
 });
