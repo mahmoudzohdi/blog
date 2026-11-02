@@ -1,5 +1,8 @@
+import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { findProblems, parseFrontmatter } from './content.mjs';
+import { findProblems, parseFrontmatter, readPosts } from './content.mjs';
 
 describe('parseFrontmatter', () => {
   it('reads YAML between the first two --- lines', () => {
@@ -8,6 +11,22 @@ describe('parseFrontmatter', () => {
 
   it('throws when there is no frontmatter', () => {
     expect(() => parseFrontmatter('# Just text')).toThrow('missing frontmatter');
+  });
+});
+
+describe('readPosts', () => {
+  it('names the post folder when its index.mdx is missing', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'posts-'));
+    try {
+      await mkdir(join(dir, 'a'));
+      await writeFile(join(dir, 'a', 'index.mdx'), '---\nthreadId: a\n---\nBody');
+      await mkdir(join(dir, 'b'));
+      // Anchored: Node's own ENOENT message already contains the full path.
+      await expect(readPosts(dir)).rejects.toThrow(/^b\/index\.mdx: /);
+      await expect(readPosts(dir)).rejects.toMatchObject({ cause: { code: 'ENOENT' } });
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
   });
 });
 

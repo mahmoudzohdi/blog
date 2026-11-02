@@ -29,4 +29,10 @@ describe('findBroken', () => {
     const pages = [{ file: 'dist/index.html', html: '<a href="/a/">a</a><a href="/missing/">m</a>' }];
     expect(findBroken(pages, (p) => files.has(p), ORIGIN)).toEqual([{ file: 'dist/index.html', ref: '/missing/' }]);
   });
+
+  it('reports malformed percent-encoding as broken instead of throwing', () => {
+    const pages = [{ file: 'dist/x.html', html: '<a href="/foo%zz">bad</a>' }];
+    expect(() => findBroken(pages, () => false, ORIGIN)).not.toThrow();
+    expect(findBroken(pages, () => false, ORIGIN)).toEqual([{ file: 'dist/x.html', ref: '/foo%zz' }]);
+  });
 });

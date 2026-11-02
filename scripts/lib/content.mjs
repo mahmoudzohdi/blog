@@ -15,7 +15,13 @@ export function parseFrontmatter(source) {
 export async function readPosts(dir) {
   const folders = (await readdir(dir, { withFileTypes: true })).filter((d) => d.isDirectory()).map((d) => d.name);
   return Promise.all(
-    folders.map(async (slug) => ({ slug, data: parseFrontmatter(await readFile(join(dir, slug, 'index.mdx'), 'utf8')) })),
+    folders.map(async (slug) => {
+      try {
+        return { slug, data: parseFrontmatter(await readFile(join(dir, slug, 'index.mdx'), 'utf8')) };
+      } catch (err) {
+        throw new Error(`${slug}/index.mdx: ${err.message}`, { cause: err });
+      }
+    }),
   );
 }
 

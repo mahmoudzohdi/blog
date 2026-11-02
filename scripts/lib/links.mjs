@@ -14,7 +14,12 @@ export function localRefs(html, origin) {
 }
 
 export function candidates(ref) {
-  const path = decodeURIComponent(ref);
+  let path;
+  try {
+    path = decodeURIComponent(ref);
+  } catch {
+    return []; // malformed %-escape: no file can match, so it is reported as broken
+  }
   if (path.endsWith('/')) return [`${path}index.html`];
   return [path, `${path}/index.html`, `${path}.html`];
 }
