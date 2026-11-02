@@ -178,3 +178,14 @@ giscus-comments { display: block; min-height: 120px; }
   .btn-row .btn { flex: 1 1 100%; justify-content: center; }
   .site-f { flex-direction: column; margin-top: 48px; }
 }
+
+/* ---------- without JavaScript ---------- */
+/* The menu button and the section bar need JS, so show the phone menu and the side menu in the page instead. */
+@media (max-width: 1000px) {
+  html:not(.js) .toc { display: block; position: static; }
+  html:not(.js) .secbar { display: none; }
+}
+@media (max-width: 640px) {
+  html:not(.js) .m-nav[hidden] { display: grid !important; }
+  html:not(.js) .menu-btn { display: none; }
+}

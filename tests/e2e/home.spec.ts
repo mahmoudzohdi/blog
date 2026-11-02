@@ -28,8 +28,21 @@ test('no page scrolls sideways', async ({ page }) => {
 test('phone menu opens the navigation', async ({ page }, info) => {
   test.skip(info.project.name !== 'phone', 'phone layout only');
   await page.goto('/');
+  await expect(page.locator('#m-nav')).toBeHidden();
   const menu = page.getByRole('button', { name: 'Menu' });
   await menu.click();
   await expect(menu).toHaveAttribute('aria-expanded', 'true');
   await expect(page.locator('#m-nav').getByRole('link', { name: 'Tags' })).toBeVisible();
+});
+
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false });
+
+  test('phone menu links are shown in the page', async ({ page }, info) => {
+    test.skip(info.project.name !== 'phone', 'phone layout only');
+    await page.goto('/');
+    await expect(page.getByRole('button', { name: 'Menu' })).toBeHidden();
+    const nav = page.locator('#m-nav');
+    for (const name of ['Posts', 'Tags', 'RSS', 'zohdi.me']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
+  });
 });

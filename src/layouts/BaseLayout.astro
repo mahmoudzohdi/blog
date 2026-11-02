@@ -21,9 +21,10 @@ const { current, ...seo } = Astro.props;
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- Must run before any CSS so the page never flashes the wrong theme -->
+    <!-- Must run before any CSS so the page never flashes the wrong theme or the no-JS layout -->
     <script is:inline>
       (function () {
+        document.documentElement.classList.add('js');
         var saved = null;
         try { saved = localStorage.getItem('theme'); } catch (e) {}
         var dark = saved ? saved === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;

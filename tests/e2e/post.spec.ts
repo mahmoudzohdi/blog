@@ -47,3 +47,13 @@ test('section bar appears after the title on phones', async ({ page }, info) => 
   await bar.getByRole('button').click();
   await expect(page.locator('#secbar-list')).toBeVisible();
 });
+
+test.describe('without JavaScript', () => {
+  test.use({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
+
+  test('side menu is shown in the page at 390px', async ({ page }) => {
+    const toc = page.getByRole('complementary', { name: 'On this page' });
+    await expect(toc.getByRole('link', { name: 'Flows and figures' })).toBeVisible();
+    await expect(page.locator('[data-secbar]')).toBeHidden();
+  });
+});
