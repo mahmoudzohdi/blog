@@ -5,11 +5,12 @@
   "description": "Mahmoud Zohdi's blog at blog.zohdi.me, built with Astro.",
   "scripts": {
     "dev": "astro dev",
+    "dev:showcase": "BLOG_FIXTURES=1 astro dev",
     "check:content": "node scripts/check-content.mjs",
     "check:dist": "node scripts/check-dist.mjs",
     "test": "vitest run",
     "build": "npm run check:content && astro check && vitest run && astro build && npm run check:dist",
-    "build:test": "SHOW_DRAFTS=1 astro build --outDir dist-test",
+    "build:test": "SHOW_DRAFTS=1 BLOG_FIXTURES=1 astro build --outDir dist-test",
     "preview": "astro preview",
     "preview:test": "astro preview --outDir dist-test",
     "test:e2e": "playwright test",

@@ -4,9 +4,17 @@ import { z } from 'astro/zod';
 
 const slugLike = /^[a-z0-9-]+$/;
 
+// With BLOG_FIXTURES=1 (test builds, `npm run dev:showcase`) posts also load src/content/fixtures/*.
+// Fixtures never reach `npm run dev` or production; scripts/check-dist.mjs refuses a BLOG_FIXTURES build.
+const withFixtures = process.env.BLOG_FIXTURES === '1';
+
 const posts = defineCollection({
-  // One folder per post: src/content/posts/<slug>/index.mdx → entry id "<slug>"
-  loader: glob({ pattern: '*/index.mdx', base: './src/content/posts' }),
+  // One folder per post or fixture: src/content/{posts,fixtures}/<slug>/index.mdx → entry id "<slug>"
+  loader: glob({
+    base: './src/content',
+    pattern: withFixtures ? ['posts/*/index.mdx', 'fixtures/*/index.mdx'] : 'posts/*/index.mdx',
+    generateId: ({ entry }) => entry.split('/')[1], // "posts/<slug>/index.mdx" → "<slug>"
+  }),
   schema: ({ image }) =>
     z.strictObject({
       title: z.string().min(1),

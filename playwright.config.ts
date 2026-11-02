@@ -6,8 +6,8 @@ export default defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: process.env.CI ? [['github'], ['html', { open: 'never' }]] : 'list',
   webServer: {
-    // Test build includes the showcase draft, so it goes to dist-test/ and never
-    // into dist/, which is what gets deployed. `--ignore-lock` keeps `astro preview`
+    // Test build includes drafts and the showcase fixture, so it goes to dist-test/ and
+    // never into dist/, which is what gets deployed. `--ignore-lock` keeps `astro preview`
     // in the foreground: Astro 7 otherwise detaches it when run by an AI agent.
     // Port 4322, not 4321, so a running `npm run dev` is never reused as the test server.
     command: 'npm run build:test && npm run preview:test -- --port 4322 --ignore-lock',
