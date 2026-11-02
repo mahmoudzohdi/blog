@@ -2,6 +2,8 @@
 
 Mahmoud Zohdi's blog. Astro 7, static, served by a Cloudflare Worker.
 
+Live at https://blog.zohdi.me
+
 ## Write
 
 - New post: `src/content/posts/<slug>/index.mdx` (images in the same folder). Copy the frontmatter from `src/content/fixtures/showcase/index.mdx`.
