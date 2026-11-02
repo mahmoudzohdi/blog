@@ -40,9 +40,10 @@ test('copy fallback selects the code without removed lines', async ({ page }) =>
   await expect(button).toHaveText(/^Press (⌘C|Ctrl\+C)$/);
   const selected = await page.evaluate(() => {
     const area = document.activeElement as HTMLTextAreaElement;
-    return { tag: area.tagName, text: area.value.slice(area.selectionStart, area.selectionEnd) };
+    return { tag: area.tagName, label: area.getAttribute('aria-label'), text: area.value.slice(area.selectionStart, area.selectionEnd) };
   });
   expect(selected.tag).toBe('TEXTAREA');
+  expect(selected.label).toMatch(/^Code to copy\. Press (⌘C|Ctrl\+C)$/);
   expect(selected.text).toContain('window.umami?.track(name)');
   expect(selected.text).not.toContain('window.umami.track(name)');
   await button.focus();

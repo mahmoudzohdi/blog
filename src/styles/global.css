@@ -182,7 +182,7 @@ giscus-comments { display: block; min-height: 120px; }
 /* ---------- without JavaScript ---------- */
 /* The menu button and the section bar need JS, so show the phone menu and the side menu in the page instead. */
 @media (max-width: 1000px) {
-  html:not(.js) .toc { display: block; position: static; }
+  html:not(.js) .toc { display: block; position: static; order: -1; }
   html:not(.js) .secbar { display: none; }
 }
 @media (max-width: 640px) {
