@@ -8,8 +8,7 @@ import { transform, walk } from 'ultrahtml';
 import sanitize from 'ultrahtml/transformers/sanitize';
 import { getPosts } from '../lib/posts';
 import { SITE } from '../lib/site';
-
-const absolute = (value: string, site: URL) => (value.startsWith('/') && !value.startsWith('//') ? new URL(value, site).href : value);
+import { absoluteSrcset, absoluteUrl } from '../lib/urls';
 
 export async function GET(context: APIContext) {
   const site = context.site ?? new URL(SITE.url);
@@ -24,16 +23,8 @@ export async function GET(context: APIContext) {
         await walk(tree, (node: any) => {
           const attrs = node.attributes as Record<string, string> | undefined;
           if (!attrs) return;
-          for (const name of ['href', 'src']) if (typeof attrs[name] === 'string') attrs[name] = absolute(attrs[name], site);
-          if (typeof attrs.srcset === 'string') {
-            attrs.srcset = attrs.srcset
-              .split(',')
-              .map((part) => {
-                const [url, size] = part.trim().split(/\s+/);
-                return [absolute(url, site), size].filter(Boolean).join(' ');
-              })
-              .join(', ');
-          }
+          for (const name of ['href', 'src']) if (typeof attrs[name] === 'string') attrs[name] = absoluteUrl(attrs[name], site);
+          if (typeof attrs.srcset === 'string') attrs.srcset = absoluteSrcset(attrs.srcset, site);
         });
         return tree;
       },
@@ -55,6 +46,7 @@ export async function GET(context: APIContext) {
     description: SITE.description,
     site,
     items,
-    customData: '<language>en</language>',
+    xmlns: { atom: 'http://www.w3.org/2005/Atom' },
+    customData: `<language>en</language><atom:link href="${new URL('/rss.xml', site).href}" rel="self" type="application/rss+xml"/>`,
   });
 }
