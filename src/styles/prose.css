@@ -58,13 +58,14 @@
 .code-block pre.astro-code { margin: 0; padding: 14px 0; border-radius: 0 0 12px 12px; background: transparent !important; white-space: normal; font: 15px/1.7 var(--mono); overflow-x: auto; }
 .code-block pre code { display: inline-block; min-width: 100%; counter-reset: line; }
 .code-block .line { display: block; white-space: pre; padding-right: 18px; counter-increment: line; }
-.code-block .line::before { content: counter(line); display: inline-block; width: 3.2em; padding-right: 1.2em; text-align: right; color: var(--code-dim); }
+/* `/ ""` gives the generated text empty alt text, so screen readers skip it; the plain `content` before it is the fallback for browsers without alt text. */
+.code-block .line::before { content: counter(line); content: counter(line) / ""; display: inline-block; width: 3.2em; padding-right: 1.2em; text-align: right; color: var(--code-dim); }
 .code-block .line.highlighted { background: rgb(143 227 216 / 0.12); box-shadow: inset 3px 0 var(--code-mark); }
 .code-block .line.highlighted::before { color: var(--code-mark); }
 .code-block .line.diff.add { background: rgb(76 196 147 / 0.14); }
-.code-block .line.diff.add::before { content: "+"; color: #4cc493; }
+.code-block .line.diff.add::before { content: "+"; content: "+" / ""; color: #4cc493; }
 .code-block .line.diff.remove { background: rgb(240 138 93 / 0.14); }
-.code-block .line.diff.remove::before { content: "\2212"; color: #f08a5d; }
+.code-block .line.diff.remove::before { content: "\2212"; content: "\2212" / ""; color: #f08a5d; }
 
 /* StackBlitz */
 .demo { display: block; margin: 1.8em 0; padding: 18px; border-radius: 12px; background: var(--surface); box-shadow: 0 0 0 1px var(--line); }

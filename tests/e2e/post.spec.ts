@@ -31,6 +31,24 @@ test('copy button copies code without removed lines', async ({ page, context }) 
   expect(copied).not.toContain('window.umami.track(name)');
 });
 
+test('copy fallback selects the code without removed lines', async ({ page }) => {
+  await page.evaluate(() => {
+    navigator.clipboard.writeText = () => Promise.reject(new Error('denied'));
+  });
+  const button = page.locator('figure.code-block').nth(1).getByRole('button', { name: 'Copy code' });
+  await button.click();
+  await expect(button).toHaveText(/^Press (⌘C|Ctrl\+C)$/);
+  const selected = await page.evaluate(() => {
+    const area = document.activeElement as HTMLTextAreaElement;
+    return { tag: area.tagName, text: area.value.slice(area.selectionStart, area.selectionEnd) };
+  });
+  expect(selected.tag).toBe('TEXTAREA');
+  expect(selected.text).toContain('window.umami?.track(name)');
+  expect(selected.text).not.toContain('window.umami.track(name)');
+  await button.focus();
+  await expect(page.locator('textarea')).toHaveCount(0);
+});
+
 test('side menu follows the current section', async ({ page }, info) => {
   test.skip(info.project.name !== 'desktop', 'desktop layout only');
   await page.evaluate(() => document.getElementById('flows-and-figures')?.scrollIntoView());
