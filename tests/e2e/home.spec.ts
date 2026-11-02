@@ -44,5 +44,8 @@ test.describe('without JavaScript', () => {
     await expect(page.getByRole('button', { name: 'Menu' })).toBeHidden();
     const nav = page.locator('#m-nav');
     for (const name of ['Posts', 'Tags', 'RSS', 'zohdi.me']) await expect(nav.getByRole('link', { name, exact: true })).toBeVisible();
+    // Controls that need JS are hidden rather than left doing nothing
+    await expect(page.locator('[data-theme-toggle]')).toBeHidden();
+    await expect(page.locator('.filter')).toBeHidden();
   });
 });

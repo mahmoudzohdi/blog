@@ -189,3 +189,5 @@ giscus-comments { display: block; min-height: 120px; }
   html:not(.js) .m-nav[hidden] { display: grid !important; }
   html:not(.js) .menu-btn { display: none; }
 }
+/* Controls that only work with JS (the LinkedIn share link is a plain link and stays). */
+html:not(.js) :is([data-theme-toggle], .filter, button[data-copy-text], [data-to-top], .code-copy) { display: none; }

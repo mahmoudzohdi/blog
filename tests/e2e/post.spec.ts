@@ -73,5 +73,10 @@ test.describe('without JavaScript', () => {
     const toc = page.getByRole('complementary', { name: 'On this page' });
     await expect(toc.getByRole('link', { name: 'Flows and figures' })).toBeVisible();
     await expect(page.locator('[data-secbar]')).toBeHidden();
+    // Controls that need JS are hidden; the LinkedIn share link works without it
+    await expect(toc.getByRole('button', { name: 'Copy link' })).toBeHidden();
+    await expect(toc.getByRole('button', { name: 'Back to top' })).toBeHidden();
+    await expect(page.locator('.code-copy').first()).toBeHidden();
+    await expect(toc.getByRole('link', { name: 'LinkedIn' })).toBeVisible();
   });
 });
