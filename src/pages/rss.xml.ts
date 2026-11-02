@@ -4,11 +4,10 @@ import type { APIContext } from 'astro';
 import { experimental_AstroContainer as AstroContainer } from 'astro/container';
 import { loadRenderers } from 'astro:container';
 import { render } from 'astro:content';
-import { transform, walk } from 'ultrahtml';
-import sanitize from 'ultrahtml/transformers/sanitize';
 import { getPosts } from '../lib/posts';
+import { rssContent } from '../lib/rss-content';
 import { SITE } from '../lib/site';
-import { absoluteSrcset, absoluteUrl, postPath } from '../lib/urls';
+import { postPath } from '../lib/urls';
 
 export async function GET(context: APIContext) {
   const site = context.site ?? new URL(SITE.url);
@@ -18,19 +17,7 @@ export async function GET(context: APIContext) {
   for (const post of await getPosts()) {
     const { Content } = await render(post);
     const raw = (await container.renderToString(Content)).replace(/^<!DOCTYPE html>/i, '');
-    const content = await transform(raw, [
-      async (tree) => {
-        await walk(tree, (node: any) => {
-          const attrs = node.attributes as Record<string, string> | undefined;
-          if (!attrs) return;
-          for (const name of ['href', 'src']) if (typeof attrs[name] === 'string') attrs[name] = absoluteUrl(attrs[name], site);
-          if (typeof attrs.srcset === 'string') attrs.srcset = absoluteSrcset(attrs.srcset, site);
-        });
-        return tree;
-      },
-      // Keep custom elements (StackBlitz link lives inside one); drop scripts, styles and buttons.
-      sanitize({ dropElements: ['script', 'style', 'button'], allowCustomElements: true }),
-    ]);
+    const content = await rssContent(raw, { site, postUrl: new URL(postPath(post.id), site).href });
     items.push({
       title: post.data.title,
       description: post.data.description,
