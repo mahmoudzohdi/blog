@@ -11,6 +11,7 @@
     "build": "npm run check:content && astro check && vitest run && astro build && npm run check:dist",
     "build:test": "SHOW_DRAFTS=1 astro build --outDir dist-test",
     "preview": "astro preview",
+    "preview:test": "astro preview --outDir dist-test",
     "test:e2e": "playwright test",
     "export": "node scripts/export.mjs",
     "deploy": "npm run build && wrangler deploy"

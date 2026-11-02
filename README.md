@@ -18,6 +18,7 @@ Mahmoud Zohdi's blog. Astro 7, static, served by a Cloudflare Worker.
 | `npm run dev` | Local site with drafts at http://localhost:4321 |
 | `npm run build` | Full gate: content check, type check, unit tests, build, link/draft check |
 | `npm run test:e2e` | Playwright + axe against a test build (includes the showcase draft) |
+| `npm run build:test && npm run preview:test` | Test build with drafts (showcase) at http://localhost:4321 |
 | `npm run export -- <slug> [devto\|hashnode\|medium]` | Markdown for cross-posting, see `CROSSPOST.md` |
 
 Pushing to `main` deploys through Cloudflare Workers Builds (build command `npm run build`). A failing build does not deploy.

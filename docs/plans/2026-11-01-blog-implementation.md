@@ -3431,7 +3431,7 @@ git commit -m "Add CI workflow and README" -m "Claude-Session: https://claude.ai
 
 **Step 1:** `npm run build` → every step passes.
 **Step 2:** `npm run test:e2e` → all pass.
-**Step 3:** Screenshots for the user (save in the session scratchpad, not the repo): home and showcase at 1280 px and 390 px, light and dark, e.g. with `npx playwright screenshot --viewport-size=1280,900 http://localhost:4321/ <scratch>/home-desktop.png` against `npm run build:test && npm run preview`.
+**Step 3:** Screenshots for the user (save in the session scratchpad, not the repo): home and showcase at 1280 px and 390 px, light and dark, e.g. with `npx playwright screenshot --viewport-size=1280,900 http://localhost:4321/ <scratch>/home-desktop.png` against `npm run build:test && npm run preview:test`.
 **Step 4:** Show the user the screenshots next to the mockup and list any differences. **STOP. Wait for the user's OK before Task 26.**
 
 ---
@@ -3467,7 +3467,7 @@ Wrangler is already logged in on this Mac. Each numbered step waits for the user
 2. **Claude, after OK:** `npm run deploy` (build gate + `wrangler deploy`). This creates the Worker `blog` and the custom domain with its certificate.
 3. Check: `curl -sI https://blog.zohdi.me/ | head -1` → `200`; `curl -sI https://blog.zohdi.me/nope/ | head -1` → `404`; `curl -sI https://blog.zohdi.me/giscus/light.css | grep -i access-control` → `https://giscus.app`; `curl -sI https://blog.zohdi.me/showcase/ | head -1` → `404` (draft not published).
 4. **User:** Workers & Pages → `blog` → Settings → Build → connect `mahmoudzohdi/blog`, production branch `main`, build command `npm run build`, deploy command `npx wrangler deploy`; under Branch control turn **off** preview builds. Node comes from `.node-version` (24).
-5. Push a trivial commit (e.g. README wording) with the user's OK, and confirm the Workers Builds run deploys. Once, on a branch, confirm a deliberately failing build does not deploy, then delete the branch.
+5. Push a trivial commit (e.g. README wording) with the user's OK, and confirm the Workers Builds run deploys. With the user's OK, push a commit to `main` that deliberately breaks the build (e.g. an invalid frontmatter field in the showcase draft), confirm Workers Builds fails and the live site is unchanged, then revert and push.
 
 ### Task 30: Hashnode and Search Console
 
