@@ -12,4 +12,3 @@
 #
 # Test builds (BLOG_FIXTURES=1) load src/content/fixtures/elsewhere.yaml instead of this file.
 []
-title: [deliberately broken
