@@ -8,7 +8,7 @@ import { transform, walk } from 'ultrahtml';
 import sanitize from 'ultrahtml/transformers/sanitize';
 import { getPosts } from '../lib/posts';
 import { SITE } from '../lib/site';
-import { absoluteSrcset, absoluteUrl } from '../lib/urls';
+import { absoluteSrcset, absoluteUrl, postPath } from '../lib/urls';
 
 export async function GET(context: APIContext) {
   const site = context.site ?? new URL(SITE.url);
@@ -35,7 +35,7 @@ export async function GET(context: APIContext) {
       title: post.data.title,
       description: post.data.description,
       pubDate: post.data.pubDate,
-      link: `/${post.id}/`,
+      link: postPath(post.id),
       categories: post.data.tags,
       content,
     });

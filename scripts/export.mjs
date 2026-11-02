@@ -2,7 +2,7 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { parseFrontmatter } from './lib/content.mjs';
 import { devtoFrontmatter, toMarkdown } from './lib/to-markdown.mjs';
 
-const SITE = 'https://blog.zohdi.me';
+const SITE = 'https://blog.zohdi.me'; // keep in sync with src/lib/site.ts SITE.url
 const RAW = 'https://raw.githubusercontent.com/mahmoudzohdi/blog/main/src/content/posts';
 const PLATFORMS = ['devto', 'hashnode', 'medium'];
 

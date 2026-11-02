@@ -5,11 +5,23 @@ import { readPosts } from './lib/content.mjs';
 import { findBroken } from './lib/links.mjs';
 
 const DIST = 'dist';
-const ORIGIN = 'https://blog.zohdi.me';
+const ORIGIN = 'https://blog.zohdi.me'; // keep in sync with src/lib/site.ts SITE.url
 
 // dist/ is what gets deployed; a SHOW_DRAFTS build would publish drafts, so never pass it.
 if (process.env.SHOW_DRAFTS === '1') {
   console.error('SHOW_DRAFTS=1 is set; refusing to pass dist/ (drafts would be published)');
+  process.exit(1);
+}
+
+// Links to ORIGIN are only checked when it matches the built site, so a changed SITE.url must not
+// silently turn that check off.
+const home = await readFile(join(DIST, 'index.html'), 'utf8').catch(() => '');
+const canonical = home.match(/<link\b[^>]*\brel="canonical"[^>]*\bhref="([^"]*)"/)?.[1];
+if (!canonical?.startsWith(`${ORIGIN}/`)) {
+  console.error(
+    `dist/index.html canonical URL is ${canonical ?? 'missing'}, expected it under ${ORIGIN}/. ` +
+      'Update ORIGIN in scripts/check-dist.mjs to match SITE.url in src/lib/site.ts.',
+  );
   process.exit(1);
 }
 

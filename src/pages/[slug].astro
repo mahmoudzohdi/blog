@@ -8,6 +8,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { formatDate, isoDate } from '../lib/dates';
 import { getPosts } from '../lib/posts';
 import { readingMinutes } from '../lib/reading-time';
+import { postPath } from '../lib/urls';
 
 export async function getStaticPaths() {
   const posts = await getPosts(); // newest first
@@ -22,7 +23,7 @@ const { Content, headings } = await render(post);
 const { title, description, pubDate, updatedDate, tags, threadId, discuss, cover } = post.data;
 const toc = headings.filter((h) => h.depth === 2 || h.depth === 3);
 const minutes = readingMinutes(post.body ?? '');
-const shareUrl = new URL(`/${post.id}/`, Astro.site).href;
+const shareUrl = new URL(postPath(post.id), Astro.site).href;
 const suggestion = older ?? newer;
 ---
 <BaseLayout title={title} description={description} image={cover?.src ?? `/og/${post.id}.png`} type="article" publishedTime={pubDate} modifiedTime={updatedDate} tags={tags}>
@@ -48,7 +49,7 @@ const suggestion = older ?? newer;
           <AuthorCard />
           <Discuss threadId={threadId} discuss={discuss} />
           {suggestion && (
-            <a class="next" href={`/${suggestion.id}/`}><small>{suggestion === older ? 'Previous post' : 'Next post'}</small>{' '}<b>{suggestion.data.title}</b></a>
+            <a class="next" href={postPath(suggestion.id)}><small>{suggestion === older ? 'Previous post' : 'Next post'}</small>{' '}<b>{suggestion.data.title}</b></a>
           )}
         </div>
       </div>

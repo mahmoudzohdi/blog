@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { absoluteSrcset, absoluteUrl } from './urls';
+import { absoluteSrcset, absoluteUrl, postPath } from './urls';
 
 const site = new URL('https://blog.zohdi.me');
 
@@ -31,5 +31,11 @@ describe('absoluteSrcset', () => {
 
   it('handles a single candidate without a descriptor', () => {
     expect(absoluteSrcset('/_astro/a.webp', site)).toBe('https://blog.zohdi.me/_astro/a.webp');
+  });
+});
+
+describe('postPath', () => {
+  it('puts a post at the site root with a trailing slash', () => {
+    expect(postPath('showcase')).toBe('/showcase/');
   });
 });

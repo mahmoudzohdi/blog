@@ -1,3 +1,5 @@
+import { postPath } from './urls';
+
 export type FeedItem = {
   kind: 'post' | 'article' | 'talk';
   title: string;
@@ -32,7 +34,7 @@ export function buildFeed(posts: PostLike[], elsewhere: ElsewhereLike[]): FeedIt
   const fromPosts: FeedItem[] = posts.map((p) => ({
     kind: 'post',
     title: p.data.title,
-    url: `/${p.id}/`,
+    url: postPath(p.id),
     date: p.data.pubDate,
     description: p.data.description,
     tags: p.data.tags,

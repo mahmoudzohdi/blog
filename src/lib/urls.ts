@@ -11,3 +11,6 @@ export const absoluteSrcset = (srcset: string, site: URL): string =>
       return [absoluteUrl(url, site), size].filter(Boolean).join(' ');
     })
     .join(', ');
+
+/** Root-relative URL of a post page. */
+export const postPath = (id: string): string => `/${id}/`;

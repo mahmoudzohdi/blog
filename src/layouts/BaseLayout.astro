@@ -13,6 +13,7 @@ import Analytics from '../components/Analytics.astro';
 import Footer from '../components/Footer.astro';
 import Header from '../components/Header.astro';
 import Seo, { type Props as SeoProps } from '../components/Seo.astro';
+import { SITE } from '../lib/site';
 
 type Props = SeoProps & { current?: 'posts' | 'tags' };
 const { current, ...seo } = Astro.props;
@@ -35,7 +36,7 @@ const { current, ...seo } = Astro.props;
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
-    <link rel="alternate" type="application/rss+xml" title="Zohdi blog" href="/rss.xml" />
+    <link rel="alternate" type="application/rss+xml" title={SITE.title} href="/rss.xml" />
     <Analytics />
   </head>
   <body>
