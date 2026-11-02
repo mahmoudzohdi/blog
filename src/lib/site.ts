@@ -23,5 +23,5 @@ export const GISCUS: { repo: string; repoId: string; category: string; categoryI
   categoryId: 'DIC_kwDOVfuPgM4DKMUE',
 };
 
-/** Filled in at launch (Task 28). No analytics script is rendered while this is empty. */
-export const UMAMI_WEBSITE_ID: string = '';
+/** Umami Cloud website shared with zohdi.me (the free plan allows one). Empty = no analytics script. */
+export const UMAMI_WEBSITE_ID: string = '2b364816-579c-476f-8b2a-5e5a7c14c8e7';

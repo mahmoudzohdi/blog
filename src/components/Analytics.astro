@@ -3,4 +3,5 @@ import { SITE, UMAMI_WEBSITE_ID } from '../lib/site';
 
 const domain = new URL(SITE.url).hostname;
 ---
-{UMAMI_WEBSITE_ID && <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id={UMAMI_WEBSITE_ID} data-domains={domain}></script>}
+{/* The blog shares the zohdi.me Umami website (free plan: one website); data-tag="blog" keeps its traffic filterable. */}
+{UMAMI_WEBSITE_ID && <script is:inline defer src="https://cloud.umami.is/script.js" data-website-id={UMAMI_WEBSITE_ID} data-domains={domain} data-tag="blog"></script>}

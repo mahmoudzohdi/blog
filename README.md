@@ -24,3 +24,7 @@ Mahmoud Zohdi's blog. Astro 7, static, served by a Cloudflare Worker.
 | `npm run export -- <slug> [devto\|hashnode\|medium]` | Markdown for cross-posting, see `CROSSPOST.md` |
 
 Pushing to `main` deploys through Cloudflare Workers Builds (build command `npm run build`). A failing build does not deploy.
+
+## Analytics
+
+Umami Cloud, sharing the zohdi.me website (the free plan allows one). The blog's tracker has `data-tag="blog"` and only runs on blog.zohdi.me; custom events are prefixed `blog_` (e.g. `blog_copy_code`) by `src/lib/track.ts`. No cookies.
