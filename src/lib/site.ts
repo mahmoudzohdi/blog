@@ -12,12 +12,15 @@ export const SITE = {
   },
 };
 
-/** Filled in at launch (Task 27). Comments stay off while repoId or categoryId is empty. */
+/**
+ * giscus comments, stored in GitHub Discussions of the blog repo. The Announcements category
+ * means only the repo owner and giscus can start threads. Comments stay off while an id is empty.
+ */
 export const GISCUS: { repo: string; repoId: string; category: string; categoryId: string } = {
   repo: 'mahmoudzohdi/blog',
-  repoId: '',
-  category: 'Comments',
-  categoryId: '',
+  repoId: 'R_kgDOVfuPgA',
+  category: 'Announcements',
+  categoryId: 'DIC_kwDOVfuPgM4DKMUE',
 };
 
 /** Filled in at launch (Task 28). No analytics script is rendered while this is empty. */
