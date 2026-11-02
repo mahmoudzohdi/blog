@@ -9,7 +9,7 @@
     "check:dist": "node scripts/check-dist.mjs",
     "test": "vitest run",
     "build": "npm run check:content && astro check && vitest run && astro build && npm run check:dist",
-    "build:test": "SHOW_DRAFTS=1 astro build",
+    "build:test": "SHOW_DRAFTS=1 astro build --outDir dist-test",
     "preview": "astro preview",
     "test:e2e": "playwright test",
     "export": "node scripts/export.mjs",

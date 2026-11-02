@@ -4,5 +4,5 @@
     "paths": { "@/*": ["./src/*"] }
   },
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "export", "node_modules"]
+  "exclude": ["dist", "dist-test", "export", "node_modules"]
 }

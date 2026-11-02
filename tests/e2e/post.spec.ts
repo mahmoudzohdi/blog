@@ -21,6 +21,7 @@ test('adds # links to headings', async ({ page }) => {
 });
 
 test('copy button copies code without removed lines', async ({ page, context }) => {
+  // Clipboard permissions are Chromium-only; both projects run Chromium.
   await context.grantPermissions(['clipboard-read', 'clipboard-write']);
   const button = page.locator('figure.code-block').nth(1).getByRole('button', { name: 'Copy code' });
   await button.click();
