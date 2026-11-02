@@ -2,7 +2,7 @@ import { mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import { findProblems, parseFrontmatter, readContent, readPosts, unpublished } from './content.mjs';
+import { elsewhereLeaks, findProblems, parseFrontmatter, readContent, readElsewhere, readPosts, unpublished } from './content.mjs';
 
 describe('parseFrontmatter', () => {
   it('reads YAML between the first two --- lines', () => {
@@ -101,5 +101,72 @@ describe('unpublished', () => {
       { slug: 'showcase', kind: 'fixture' },
       { slug: 'other', kind: 'fixture' },
     ]);
+  });
+});
+
+describe('readElsewhere', () => {
+  const withFile = async (text, fn) => {
+    const dir = await mkdtemp(join(tmpdir(), 'elsewhere-'));
+    try {
+      await writeFile(join(dir, 'elsewhere.yaml'), text);
+      await fn(join(dir, 'elsewhere.yaml'));
+    } finally {
+      await rm(dir, { recursive: true, force: true });
+    }
+  };
+
+  it('reads the list of entries', () =>
+    withFile('- id: a\n  title: A\n  url: https://example.com/a\n', async (file) => {
+      expect(await readElsewhere(file)).toEqual([{ id: 'a', title: 'A', url: 'https://example.com/a' }]);
+    }));
+
+  it('reads an empty list or a comment-only file as no entries', async () => {
+    await withFile('# none yet\n[]\n', async (file) => expect(await readElsewhere(file)).toEqual([]));
+    await withFile('# none yet\n', async (file) => expect(await readElsewhere(file)).toEqual([]));
+  });
+
+  it('rejects anything but a list', () =>
+    withFile('a:\n  title: A\n', async (file) => {
+      await expect(readElsewhere(file)).rejects.toThrow(/elsewhere\.yaml: expected a list of entries/);
+    }));
+
+  it('fails when the file is missing', async () => {
+    await expect(readElsewhere(join(tmpdir(), 'no-such-dir', 'elsewhere.yaml'))).rejects.toMatchObject({ code: 'ENOENT' });
+  });
+});
+
+describe('elsewhereLeaks', () => {
+  const entries = [
+    { id: 'talk', title: 'Fixture talk', url: 'https://example.com/talk/' },
+    { id: 'quote', title: `Fixture "quoted" & <odd>`, url: 'https://example.com/q?a=1&b=2' },
+  ];
+
+  it('finds an entry url or title in a built file', () => {
+    const files = [
+      { file: 'dist/index.html', text: '<a href="https://example.com/talk/">x</a>' },
+      { file: 'dist/tags/index.html', text: '<h3>Fixture talk</h3>' },
+      { file: 'dist/rss.xml', text: '<rss></rss>' },
+    ];
+    expect(elsewhereLeaks(files, entries)).toEqual([
+      { file: 'dist/index.html', id: 'talk' },
+      { file: 'dist/tags/index.html', id: 'talk' },
+    ]);
+  });
+
+  it('finds HTML-escaped titles and urls', () => {
+    const files = [
+      { file: 'dist/a.html', text: '<h3>Fixture &quot;quoted&quot; &amp; &lt;odd&gt;</h3>' },
+      { file: 'dist/b.html', text: '<a href="https://example.com/q?a=1&amp;b=2">x</a>' },
+    ];
+    expect(elsewhereLeaks(files, entries)).toEqual([
+      { file: 'dist/a.html', id: 'quote' },
+      { file: 'dist/b.html', id: 'quote' },
+    ]);
+  });
+
+  it('reports nothing for a clean build or no entries', () => {
+    const files = [{ file: 'dist/index.html', text: '<p>No posts yet.</p>' }];
+    expect(elsewhereLeaks(files, entries)).toEqual([]);
+    expect(elsewhereLeaks(files, [])).toEqual([]);
   });
 });

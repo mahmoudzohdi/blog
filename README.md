@@ -9,7 +9,7 @@ Mahmoud Zohdi's blog. Astro 7, static, served by a Cloudflare Worker.
 - Components: `import { Callout, Figure, Steps, StackBlitz } from '@/components/mdx';` — see the Component showcase for every option (`npm run dev:showcase`, then `/showcase/`).
 - `src/content/fixtures/` holds test-only posts like the showcase. They load only with `BLOG_FIXTURES=1` (`npm run dev:showcase`, `npm run build:test`) and never publish: `npm run build` refuses a fixtures build and fails if one reaches `dist/`.
 - Code fences: ```` ```js title="file.js" {3,8} ````, and `// [!code ++]` / `// [!code --]` for diffs.
-- Talks and posts published elsewhere: `src/content/elsewhere.yaml`.
+- Talks and posts published elsewhere: `src/content/elsewhere.yaml` (entry format in the comment at its top). Test-only elsewhere entries live in `src/content/fixtures/elsewhere.yaml`; fixture builds load that file instead, and `npm run build` fails if one of them reaches `dist/`.
 - Slugs and `threadId` never change after publishing (comments and links depend on them). If a slug must change, add a line to `public/_redirects`.
 
 ## Commands

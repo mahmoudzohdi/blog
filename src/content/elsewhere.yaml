@@ -1,16 +1,14 @@
-- id: nasa-space-apps-cairo-2026
-  title: "Web development as a tool: turn your idea into a live prototype"
-  url: https://talks.zohdi.me/nasa-space-apps-cairo-2026/
-  date: 2026-10-30
-  kind: talk
-  where: NASA Space Apps Cairo
-  description: Workshop at NASA Space Apps Cairo. Slides on talks.zohdi.me.
-  tags: [talks]
-
-- id: login-first-modal-medium
-  title: Create reusable “Login First” modal before the user action with Vue.js + Vuex
-  url: https://medium.com/@mahmoud.zohdi/create-reusable-login-first-modal-before-the-user-action-with-vue-js-vuex-caa7038b352b
-  date: 2019-10-24
-  kind: article
-  where: Medium
-  tags: [vue, vuex]
+# Talks and articles published on other sites, listed on the home page next to posts.
+# Replace the [] below with a list of entries, for example:
+#
+# - id: my-talk-2026          # unique, lowercase letters, digits and dashes
+#   title: "Talk or article title"
+#   url: https://example.com/where-it-lives/
+#   date: 2026-10-30          # YYYY-MM-DD
+#   kind: talk                # talk | article
+#   where: Conference or site name, e.g. Medium (shown on articles and in "opens …")
+#   description: Optional one-line summary.
+#   tags: [talks]             # at least one, lowercase letters, digits and dashes
+#
+# Test builds (BLOG_FIXTURES=1) load src/content/fixtures/elsewhere.yaml instead of this file.
+[]

@@ -4,8 +4,9 @@ import { z } from 'astro/zod';
 
 const slugLike = /^[a-z0-9-]+$/;
 
-// With BLOG_FIXTURES=1 (test builds, `npm run dev:showcase`) posts also load src/content/fixtures/*.
-// Fixtures never reach `npm run dev` or production; scripts/check-dist.mjs refuses a BLOG_FIXTURES build.
+// With BLOG_FIXTURES=1 (test builds, `npm run dev:showcase`) posts also load src/content/fixtures/*/index.mdx
+// and elsewhere loads src/content/fixtures/elsewhere.yaml. Fixtures never reach `npm run dev` or production;
+// scripts/check-dist.mjs refuses a BLOG_FIXTURES build and fails if a fixture reaches dist/.
 const withFixtures = process.env.BLOG_FIXTURES === '1';
 
 const posts = defineCollection({
@@ -30,7 +31,10 @@ const posts = defineCollection({
 });
 
 const elsewhere = defineCollection({
-  loader: file('src/content/elsewhere.yaml'),
+  // file() reads a single file (and clears the collection on each read), so a fixtures build swaps
+  // the real list for the test-only one instead of merging the two. That keeps the e2e data fixed
+  // whatever real entries exist, and fixture ids can never clash with real ones.
+  loader: file(withFixtures ? 'src/content/fixtures/elsewhere.yaml' : 'src/content/elsewhere.yaml'),
   schema: z.strictObject({
     id: z.string().optional(),
     title: z.string().min(1),

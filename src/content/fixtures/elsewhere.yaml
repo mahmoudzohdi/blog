@@ -1,0 +1,19 @@
+# Test-only elsewhere entries for the e2e tests. Never published: with BLOG_FIXTURES=1
+# (npm run build:test, npm run dev:showcase) this file replaces src/content/elsewhere.yaml,
+# and npm run build fails if any url or title below shows up in dist/.
+- id: fixture-talk
+  title: "Fixture talk: building in public"
+  url: https://example.com/fixture-talk/
+  date: 2026-10-30
+  kind: talk
+  where: Example Conf
+  description: Test-only entry. Never published.
+  tags: [talks]
+
+- id: fixture-article
+  title: "Fixture article published on another site"
+  url: https://medium.com/@example/fixture-article
+  date: 2019-10-24
+  kind: article
+  where: Medium
+  tags: [vue, vuex]

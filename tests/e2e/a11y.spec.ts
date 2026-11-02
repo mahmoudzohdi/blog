@@ -10,11 +10,13 @@ async function seriousProblems(page: Page) {
   return blocking.map((v) => `${v.id}: ${v.help} (${v.nodes.length})`);
 }
 
+// /showcase/ and /tags/vue/ come from test-only fixtures (src/content/fixtures/).
 for (const path of ['/', '/showcase/', '/tags/', '/tags/vue/', '/no-such-page/']) {
   for (const scheme of ['light', 'dark'] as const) {
     test(`${path} has no serious accessibility problems (${scheme})`, async ({ page }) => {
       await page.emulateMedia({ colorScheme: scheme });
-      await page.goto(path);
+      const response = await page.goto(path);
+      expect(response?.status(), path).toBe(path === '/no-such-page/' ? 404 : 200);
       expect(await seriousProblems(page)).toEqual([]);
     });
   }

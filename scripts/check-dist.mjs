@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { readFile, readdir } from 'node:fs/promises';
 import { join } from 'node:path';
-import { readContent, unpublished } from './lib/content.mjs';
+import { elsewhereLeaks, readContent, readElsewhere, unpublished } from './lib/content.mjs';
 import { findBroken } from './lib/links.mjs';
 
 const DIST = 'dist';
@@ -42,6 +42,10 @@ for (const { slug, kind } of unpublished(posts, fixtures)) {
   // Full URL, not a bare /<slug>/: post bodies in the feed can hold external links or tag paths.
   if (rss.includes(`${ORIGIN}/${slug}/`)) problems.push(`${kind} "${slug}" is listed in dist/rss.xml`);
 }
+// Test-only elsewhere entries (they replace src/content/elsewhere.yaml in BLOG_FIXTURES builds).
+const fixtureElsewhere = await readElsewhere('src/content/fixtures/elsewhere.yaml');
+const built = [...pages.map(({ file, html }) => ({ file, text: html })), { file: join(DIST, 'rss.xml'), text: rss }];
+for (const { file, id } of elsewhereLeaks(built, fixtureElsewhere)) problems.push(`fixture elsewhere entry "${id}" appears in ${file}`);
 
 if (problems.length > 0) {
   console.error(`Built-site check failed:\n${problems.map((p) => `  - ${p}`).join('\n')}`);

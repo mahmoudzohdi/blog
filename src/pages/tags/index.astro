@@ -11,8 +11,12 @@ const tags = collectTags(buildFeed(await getPosts(), await getElsewhere()));
       <h1>Tags</h1>
       <p>Every topic, with how many posts and talks use it.</p>
     </section>
-    <ul class="tag-list">
-      {tags.map(({ tag, count }) => <li><a href={`/tags/${tag}/`}>{tag}{' '}<span>{count}</span></a></li>)}
-    </ul>
+    {tags.length > 0 ? (
+      <ul class="tag-list">
+        {tags.map(({ tag, count }) => <li><a href={`/tags/${tag}/`}>{tag}{' '}<span>{count}</span></a></li>)}
+      </ul>
+    ) : (
+      <p class="empty">No tags yet.</p>
+    )}
   </main>
 </BaseLayout>

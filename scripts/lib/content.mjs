@@ -63,3 +63,24 @@ export function unpublished(posts, fixtures) {
     ...fixtures.map(({ slug }) => ({ slug, kind: 'fixture' })),
   ];
 }
+
+/** Reads an elsewhere list (src/content/elsewhere.yaml, or its test-only copy in fixtures/). `[]` or no entries gives []. */
+export async function readElsewhere(file) {
+  const data = parse(await readFile(file, 'utf8')) ?? [];
+  if (!Array.isArray(data)) throw new Error(`${file}: expected a list of entries`);
+  return data;
+}
+
+// Astro escapes these in text and attributes, so a built page may hold the escaped form.
+const escapeHtml = (s) =>
+  s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+
+/** Built files ({ file, text }) that contain an entry's url or title, raw or HTML-escaped: [{ file, id }]. */
+export function elsewhereLeaks(files, entries) {
+  const leaks = [];
+  for (const { id, url, title } of entries) {
+    const needles = [url, title].filter(Boolean).flatMap((s) => [s, escapeHtml(s)]);
+    for (const { file, text } of files) if (needles.some((n) => text.includes(n))) leaks.push({ file, id });
+  }
+  return leaks;
+}
